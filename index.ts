@@ -3,17 +3,18 @@ import robot from 'robotjs';
 import { WebSocketServer } from 'ws';
 import httpServer from './src/http_server/index';
 import {
-  // DRAW_CIRCLE,
-  // DRAW_RECTANGLE,
-  // DRAW_SQUARE,
+  DRAW_CIRCLE,
+  DRAW_RECTANGLE,
+  DRAW_SQUARE,
   MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP,
 } from './src/const';
 import { Mouse } from './src/types/mouse';
 import {
   moveMouseDown, moveMouseLeft, moveMouseRight, moveMouseUp,
 } from './src/move/move';
-// import drawSquare from './src/draw/drawSqueare';
-// import drawRectangle from './src/draw/drawRectangle';
+import drawSquare from './src/draw/drawSqueare';
+import drawRectangle from './src/draw/drawRectangle';
+import drawCircle from './src/draw/drawCircle';
 
 const HTTP_PORT = 3000;
 
@@ -34,35 +35,36 @@ wss.on('connection', (ws) => {
 
     switch (command) {
       case MOUSE_POSITION:
+        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}`);
         break;
       case MOUSE_UP:
         moveMouseUp(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}`);
+        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
         break;
       case MOUSE_DOWN:
         moveMouseDown(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}`);
+        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
         break;
       case MOUSE_LEFT:
         moveMouseLeft(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}`);
+        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
         break;
       case MOUSE_RIGHT:
         moveMouseRight(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}`);
+        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
         break;
-        // case DRAW_CIRCLE:
-        // ws.send(DRAW_RECTANGLE);
-        // break;
-      // case DRAW_SQUARE:
-      //   ws.send(DRAW_SQUARE);
-      //   drawSquare(+args);
-      //   return;
-      // case DRAW_RECTANGLE:
-      //   ws.send(DRAW_RECTANGLE);
-      //   const [shiftX, shiftY] = args;
-      //   drawRectangle(+shiftX, +shiftY);
-      //   break;
+      case DRAW_CIRCLE:
+        drawCircle(+args);
+        ws.send(DRAW_RECTANGLE);
+        break;
+      case DRAW_SQUARE:
+        ws.send(`${DRAW_SQUARE}\0`);
+        drawSquare(+args);
+        return;
+      case DRAW_RECTANGLE:
+        ws.send(`${DRAW_RECTANGLE}\0`);
+        drawRectangle(args.map((arg) => +arg));
+        break;
       default:
         console.log('Unknown command', command, args);
     }
