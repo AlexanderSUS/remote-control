@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import robot from 'robotjs';
 
 const drawSquare = (x: number, y: number, size: number) => {

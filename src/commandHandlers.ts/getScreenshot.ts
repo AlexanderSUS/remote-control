@@ -12,7 +12,7 @@ const getScreenshot = async (ws: WebSocket, x: number, y: number) => {
   };
 
   const bmp = robot.screen.capture(x, y, SIZE, SIZE);
-  swapRedAndBlueChannel(bmp); // possible side effect using a pointer here
+  swapRedAndBlueChannel(bmp);
   const jimpImg = new Jimp(SIZE, SIZE);
 
   jimpImg.bitmap.data = bmp.image;

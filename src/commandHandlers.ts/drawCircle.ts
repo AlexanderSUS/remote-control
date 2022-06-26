@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import robot from 'robotjs';
 
 const drawCircle = (x: number, y: number, radius: number) => {

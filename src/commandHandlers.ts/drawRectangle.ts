@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import robot from 'robotjs';
 
 const drawRectangle = (x: number, y: number, shiftX: number, shiftY: number) => {
