@@ -23,7 +23,7 @@ const getScreenshot = async (ws: WebSocket, x: number, y: number) => {
   // const data = base64.slice('data:image/png;base64,'.length);
   // ws.send(`${PRINT_SCREEN} ${data}`);
 
-  console.log(`Result: ${data}`);
+  console.log(`Result: ${data}\nSuccess!`);
 };
 
 export default getScreenshot;

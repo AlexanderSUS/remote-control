@@ -5,10 +5,10 @@ import {
   DRAW_SQUARE,
   MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN,
 } from '../const';
-import drawCircle from '../draw/drawCircle';
-import drawRectangle from '../draw/drawRectangle';
-import drawSquare from '../draw/drawSquaare';
-import getScreenshot from '../screenshot/getScreenshot';
+import drawCircle from './drawCircle';
+import drawRectangle from './drawRectangle';
+import drawSquare from './drawSquaare';
+import getScreenshot from './getScreenshot';
 
 class Handler {
   private ws: WebSocket;
