@@ -97,7 +97,7 @@ class Handler implements IHandler {
 
   [PRINT_SCREEN] = () => {
     this.getMouseCoordinates();
-    this.sendCommand(DRAW_CIRCLE);
+    this.sendCommand(PRINT_SCREEN);
     getScreenshot(this.ws, this.x, this.y);
   };
 }
