@@ -14,23 +14,26 @@ import {
 import drawSquare from './src/draw/drawSqueare';
 import drawRectangle from './src/draw/drawRectangle';
 import drawCircle from './src/draw/drawCircle';
+import {
+  showHttpServerStart, showWsClosed, showWsConnected, showWssParams, showWssStart,
+} from './src/notifications/notifications';
 // import getScreenshot from './src/screenshot/getScreenshot';
 
 const HTTP_PORT = 3000;
 const WSS_PORT = 8080;
 
-console.log(`Start static http server on the ${HTTP_PORT} port!`);
+showHttpServerStart(HTTP_PORT);
 httpServer.listen(HTTP_PORT);
 
 const wss = new WebSocketServer({ port: WSS_PORT });
-console.log(`WS server in running on the ${WSS_PORT} port!`);
+showWssStart(WSS_PORT);
 
 wss.on('headers', (headers) => {
-  console.log('WSS parameters:\n', headers.join('\n'));
+  showWssParams(headers);
 });
 
 wss.on('connection', (ws) => {
-  console.log('WebSocket connected');
+  showWsConnected();
 
   const mouse: Mouse = robot.getMousePos();
 
@@ -80,6 +83,6 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    console.log('WebSocket connection closed');
+    showWsClosed();
   });
 });
