@@ -6,6 +6,7 @@ import {
 import Handler from './src/commandHandlers.ts/commandHandler';
 import isCommandValid from './src/utils.ts/isCommandValid';
 import isMousePosOrPrintScrn from './src/utils.ts/isMousePosOrPrntScrn';
+import { FAIL_INVALID_COMMAND, INVALID_COMMAND } from './src/const';
 
 const HTTP_PORT = 3000;
 const WSS_PORT = 8080;
@@ -38,8 +39,8 @@ wss.on('connection', (ws) => {
         handler[command](args);
       }
     } else {
-      duplex.write('Invalid command');
-      process.stdout.write(`Fail. Invalid command: ${command}\n`);
+      duplex._write(INVALID_COMMAND, 'utf-8', (err) => console.error(err));
+      process.stdout.write(`${FAIL_INVALID_COMMAND}${command}\n`);
     }
   });
 

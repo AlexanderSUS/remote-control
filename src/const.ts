@@ -15,3 +15,9 @@ export const DRAW_RECTANGLE = 'draw_rectangle';
 export const DRAW_SQUARE = 'draw_square';
 
 export const PRINT_SCREEN = 'prnt_scrn';
+
+export const INVALID_COMMAND = 'Invalid command\0';
+
+export const FAIL_INVALID_COMMAND = 'Fail. Invalid command: ';
+
+export const SUCCESS = '\nSuccess\n';

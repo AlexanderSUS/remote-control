@@ -4,7 +4,7 @@ import {
   DRAW_CIRCLE,
   DRAW_RECTANGLE,
   DRAW_SQUARE,
-  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN,
+  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN, SUCCESS,
 } from '../const';
 import { IHandler } from '../types/handler';
 import drawCircle from './drawCircle';
@@ -37,12 +37,12 @@ class Handler implements IHandler {
 
   private sendMousePos() {
     this.duplex._write(`${MOUSE_POSITION} ${this.x},${this.y}\0`, 'utf-8', (err) => err && console.error(err));
-    process.stdout.write('\nSuccess!\n');
+    process.stdout.write(SUCCESS);
   }
 
   private sendCommand(command: string) {
-    this.duplex._write(command, 'utf-8', (err) => err && console.error(err));
-    process.stdout.write(`${command}\nSuccess!\n`);
+    this.duplex._write(`${command}\0`, 'utf-8', (err) => err && console.error(err));
+    process.stdout.write(`${command}${SUCCESS}`);
   }
 
   [MOUSE_POSITION] = () => {
