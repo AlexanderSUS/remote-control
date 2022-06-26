@@ -1,4 +1,4 @@
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, createWebSocketStream } from 'ws';
 import httpServer from './src/http_server/index';
 import {
   showHttpServerStart, showWsClosed, showWsConnected, showWssParams, showWssStart,
@@ -23,9 +23,12 @@ wss.on('headers', (headers) => {
 wss.on('connection', (ws) => {
   showWsConnected();
 
-  const handler = new Handler(ws as unknown as WebSocket);
+  const duplex = createWebSocketStream(ws, { encoding: 'utf-8' });
+  duplex.pipe(process.stdout);
 
-  ws.on('message', (data) => {
+  const handler = new Handler(duplex);
+
+  duplex.on('data', (data) => {
     const [command, ...args] = data.toString().split(' ');
 
     if (isCommandValid(command)) {
@@ -35,8 +38,8 @@ wss.on('connection', (ws) => {
         handler[command](args);
       }
     } else {
-      ws.send('Invalid command');
-      console.log('Invalid command');
+      duplex.write('Invalid command');
+      process.stdout.write(`Fail. Invalid command: ${command}\n`);
     }
   });
 

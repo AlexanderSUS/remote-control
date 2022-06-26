@@ -1,4 +1,5 @@
 import robot from 'robotjs';
+import internal from 'stream';
 import {
   DRAW_CIRCLE,
   DRAW_RECTANGLE,
@@ -12,14 +13,14 @@ import drawSquare from './drawSquaare';
 import getScreenshot from './getScreenshot';
 
 class Handler implements IHandler {
-  private ws: WebSocket;
+  private duplex: internal.Duplex;
 
   private x: number;
 
   private y: number;
 
-  constructor(ws: WebSocket) {
-    this.ws = ws;
+  constructor(duplex: internal.Duplex) {
+    this.duplex = duplex;
     this.x = 0;
     this.y = 0;
   }
@@ -35,14 +36,13 @@ class Handler implements IHandler {
   }
 
   private sendMousePos() {
-    this.ws.send(`${MOUSE_POSITION} ${this.x},${this.y}}\0`.toString());
-    process.stdin.end();
-    console.log(`${MOUSE_POSITION} ${this.x},${this.y}\nSuccess!`);
+    this.duplex._write(`${MOUSE_POSITION} ${this.x},${this.y}\0`, 'utf-8', (err) => err && console.error(err));
+    process.stdout.write('\nSuccess!\n');
   }
 
   private sendCommand(command: string) {
-    this.ws.send(command);
-    console.log(`${command}\nSuccess`);
+    this.duplex._write(command, 'utf-8', (err) => err && console.error(err));
+    process.stdout.write(`${command}\nSuccess!\n`);
   }
 
   [MOUSE_POSITION] = () => {
@@ -98,7 +98,7 @@ class Handler implements IHandler {
   [PRINT_SCREEN] = () => {
     this.getMouseCoordinates();
     this.sendCommand(PRINT_SCREEN);
-    getScreenshot(this.ws, this.x, this.y);
+    getScreenshot(this.duplex, this.x, this.y);
   };
 }
 

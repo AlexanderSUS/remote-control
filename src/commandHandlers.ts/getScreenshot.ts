@@ -1,8 +1,9 @@
 import Jimp from 'jimp';
 import robot from 'robotjs';
+import internal from 'stream';
 import { PRINT_SCREEN } from '../const';
 
-const getScreenshot = async (ws: WebSocket, x: number, y: number) => {
+const getScreenshot = async (duplex: internal.Duplex, x: number, y: number) => {
   const SIZE = 200;
 
   const swapRedAndBlueChannel = (bmp: robot.Bitmap) => {
@@ -19,7 +20,8 @@ const getScreenshot = async (ws: WebSocket, x: number, y: number) => {
 
   const buffer = await jimpImg.getBufferAsync(jimpImg.getMIME());
   const data = buffer.toString('base64');
-  ws.send(`${PRINT_SCREEN} ${data}\0`);
+
+  duplex._write(`${PRINT_SCREEN} ${data}\0`, 'utf-8', (err) => console.error(err));
 };
 
 export default getScreenshot;
