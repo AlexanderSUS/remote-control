@@ -35,7 +35,8 @@ class Handler implements IHandler {
   }
 
   private sendMousePos() {
-    this.ws.send(`${MOUSE_POSITION} ${this.x},${this.y}}\0`);
+    this.ws.send(`${MOUSE_POSITION} ${this.x},${this.y}}\0`.toString());
+    process.stdin.end();
     console.log(`${MOUSE_POSITION} ${this.x},${this.y}\nSuccess!`);
   }
 
