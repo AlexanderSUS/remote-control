@@ -3,11 +3,12 @@ import {
   DRAW_CIRCLE,
   DRAW_RECTANGLE,
   DRAW_SQUARE,
-  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP,
+  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN,
 } from '../const';
 import drawCircle from '../draw/drawCircle';
 import drawRectangle from '../draw/drawRectangle';
 import drawSquare from '../draw/drawSquaare';
+import getScreenshot from '../screenshot/getScreenshot';
 
 class Handler {
   private ws: WebSocket;
@@ -90,6 +91,12 @@ class Handler {
     this.sendCommand(DRAW_CIRCLE);
 
     drawCircle(this.x, this.y, +radius);
+  };
+
+  [PRINT_SCREEN] = () => {
+    this.getMouseCoordinates();
+    this.sendCommand(DRAW_CIRCLE);
+    getScreenshot(this.ws, this.x, this.y);
   };
 }
 
