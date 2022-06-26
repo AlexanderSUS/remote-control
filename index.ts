@@ -1,23 +1,11 @@
-import robot from 'robotjs';
 import { WebSocketServer } from 'ws';
 import httpServer from './src/http_server/index';
-import {
-  DRAW_CIRCLE,
-  DRAW_RECTANGLE,
-  DRAW_SQUARE,
-  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN,
-} from './src/const';
-import { Mouse } from './src/types/mouse';
-import {
-  moveMouseDown, moveMouseLeft, moveMouseRight, moveMouseUp,
-} from './src/move/move';
-import drawSquare from './src/draw/drawSqueare';
-import drawRectangle from './src/draw/drawRectangle';
-import drawCircle from './src/draw/drawCircle';
+import { MOUSE_POSITION } from './src/const';
 import {
   showHttpServerStart, showWsClosed, showWsConnected, showWssParams, showWssStart,
 } from './src/notifications/notifications';
-// import getScreenshot from './src/screenshot/getScreenshot';
+import Handler from './src/commandHandlers.ts/commandHandler';
+import isCommandValid from './src/utils.ts/isCommandValid';
 
 const HTTP_PORT = 3000;
 const WSS_PORT = 8080;
@@ -35,51 +23,21 @@ wss.on('headers', (headers) => {
 wss.on('connection', (ws) => {
   showWsConnected();
 
-  const mouse: Mouse = robot.getMousePos();
+  const handler = new Handler(ws as unknown as WebSocket);
 
   ws.on('message', (data) => {
     const [command, ...args] = data.toString().split(' ');
 
-    switch (command) {
-      case MOUSE_POSITION:
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}\0`);
-        break;
-      case MOUSE_UP:
-        moveMouseUp(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
-        break;
-      case MOUSE_DOWN:
-        moveMouseDown(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
-        break;
-      case MOUSE_LEFT:
-        moveMouseLeft(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
-        break;
-      case MOUSE_RIGHT:
-        moveMouseRight(mouse, +args);
-        ws.send(`${MOUSE_POSITION} ${mouse.x},${mouse.y}}\0`);
-        break;
-      case DRAW_CIRCLE:
-        drawCircle(+args);
-        ws.send(`${DRAW_RECTANGLE}\0`);
-        break;
-      case DRAW_SQUARE:
-        ws.send(`${DRAW_SQUARE}\0`);
-        drawSquare(+args);
-        return;
-      case DRAW_RECTANGLE:
-        ws.send(`${DRAW_RECTANGLE}\0`);
-        drawRectangle(args.map((arg) => +arg));
-        break;
-      case PRINT_SCREEN:
-        // getScreenshot(ws as unknown as WebSocket);
-        break;
-      default:
-        return;
+    if (isCommandValid(command)) {
+      if (args) {
+        handler[command as keyof typeof handler](args);
+      } else {
+        handler[command as typeof MOUSE_POSITION]();
+      }
+    } else {
+      ws.send('Invalid command');
+      console.log('Invalid command');
     }
-    console.log(command);
-    console.log(`${MOUSE_POSITION} ${mouse.x},${mouse.y}`);
   });
 
   ws.on('close', () => {

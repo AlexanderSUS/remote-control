@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import robot from 'robotjs';
 
-const drawRectangle = (x: number, y: number, shiftX: number, shiftY: number) => {
+const drawSquare = (x: number, y: number, size: number) => {
   const startX = x;
   const startY = y;
 
-  const endX = x + shiftX;
-  const endY = y + shiftY;
+  const endX = x + size;
+  const endY = y + size;
 
   robot.mouseClick();
 
@@ -35,4 +35,4 @@ const drawRectangle = (x: number, y: number, shiftX: number, shiftY: number) => 
   robot.mouseToggle('up');
 };
 
-export default drawRectangle;
+export default drawSquare;
