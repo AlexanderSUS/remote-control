@@ -4,7 +4,7 @@ import {
   DRAW_SQUARE,
   MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN,
 } from '../const';
-import { HandlerCommand } from '../types/utils';
+import { HandlerCommand } from '../types/handler';
 
 function isCommandValid(command: string | HandlerCommand): command is HandlerCommand {
   return (command === MOUSE_UP

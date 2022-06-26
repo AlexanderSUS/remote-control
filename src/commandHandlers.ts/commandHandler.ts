@@ -5,12 +5,13 @@ import {
   DRAW_SQUARE,
   MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN,
 } from '../const';
+import { IHandler } from '../types/handler';
 import drawCircle from './drawCircle';
 import drawRectangle from './drawRectangle';
 import drawSquare from './drawSquaare';
 import getScreenshot from './getScreenshot';
 
-class Handler {
+class Handler implements IHandler {
   private ws: WebSocket;
 
   private x: number;

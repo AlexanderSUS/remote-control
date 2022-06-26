@@ -1,11 +1,11 @@
 import { WebSocketServer } from 'ws';
 import httpServer from './src/http_server/index';
-import { MOUSE_POSITION } from './src/const';
 import {
   showHttpServerStart, showWsClosed, showWsConnected, showWssParams, showWssStart,
 } from './src/notifications/notifications';
 import Handler from './src/commandHandlers.ts/commandHandler';
 import isCommandValid from './src/utils.ts/isCommandValid';
+import isMousePosOrPrintScrn from './src/utils.ts/isMousePosOrPrntScrn';
 
 const HTTP_PORT = 3000;
 const WSS_PORT = 8080;
@@ -29,10 +29,10 @@ wss.on('connection', (ws) => {
     const [command, ...args] = data.toString().split(' ');
 
     if (isCommandValid(command)) {
-      if (args) {
-        handler[command as keyof typeof handler](args);
+      if (isMousePosOrPrintScrn(command)) {
+        handler[command]();
       } else {
-        handler[command as typeof MOUSE_POSITION]();
+        handler[command](args);
       }
     } else {
       ws.send('Invalid command');
