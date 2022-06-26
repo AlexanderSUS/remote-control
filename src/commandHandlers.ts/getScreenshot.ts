@@ -1,11 +1,9 @@
 import Jimp from 'jimp';
 import robot from 'robotjs';
 import internal from 'stream';
-import { PRINT_SCREEN } from '../const';
+import { PRINT_SCREEN, SIZE } from '../const';
 
 const getScreenshot = async (duplex: internal.Duplex, x: number, y: number) => {
-  const SIZE = 200;
-
   const swapRedAndBlueChannel = (bmp: robot.Bitmap) => {
     for (let i = 0; i < (bmp.width * bmp.height) * 4; i += 4) { // swap red and blue channel
       [bmp.image[i], bmp.image[i + 2]] = [bmp.image[i + 2], bmp.image[i]]; // red channel
@@ -21,7 +19,7 @@ const getScreenshot = async (duplex: internal.Duplex, x: number, y: number) => {
   const buffer = await jimpImg.getBufferAsync(jimpImg.getMIME());
   const data = buffer.toString('base64');
 
-  duplex._write(`${PRINT_SCREEN} ${data}\0`, 'utf-8', (err) => console.error(err));
+  duplex._write(`${PRINT_SCREEN} ${data}\0`, 'utf-8', (err) => err && console.error(err));
 };
 
 export default getScreenshot;

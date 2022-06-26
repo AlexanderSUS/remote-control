@@ -4,7 +4,7 @@ import {
   DRAW_CIRCLE,
   DRAW_RECTANGLE,
   DRAW_SQUARE,
-  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN, SUCCESS,
+  MOUSE_DOWN, MOUSE_LEFT, MOUSE_POSITION, MOUSE_RIGHT, MOUSE_UP, PRINT_SCREEN, SIZE,
 } from '../const';
 import { IHandler } from '../types/handler';
 import drawCircle from './drawCircle';
@@ -19,10 +19,13 @@ class Handler implements IHandler {
 
   private y: number;
 
+  private shifts: number[];
+
   constructor(duplex: internal.Duplex) {
     this.duplex = duplex;
     this.x = 0;
     this.y = 0;
+    this.shifts = [];
   }
 
   private getMouseCoordinates() {
@@ -37,12 +40,33 @@ class Handler implements IHandler {
 
   private sendMousePos() {
     this.duplex._write(`${MOUSE_POSITION} ${this.x},${this.y}\0`, 'utf-8', (err) => err && console.error(err));
-    process.stdout.write(SUCCESS);
+    process.stdout.write(`. Result: mouse position: x: ${this.x}, y: ${this.y}\n`);
+  }
+
+  private printResult(command: string) {
+    if (command === PRINT_SCREEN) {
+      process.stdout.write(`. Result: screenshoot ${SIZE} * ${SIZE} px\n`);
+    }
+
+    if (command === DRAW_CIRCLE) {
+      const [radius] = this.shifts;
+      process.stdout.write(`. Result: circle with r=${radius} px\n`);
+    }
+
+    if (command === DRAW_RECTANGLE) {
+      const [width, height] = this.shifts;
+      process.stdout.write(`. Result: rectange, size: ${width} * ${height} px\n`);
+    }
+
+    if (command === DRAW_SQUARE) {
+      const [side] = this.shifts;
+      process.stdout.write(`. Result: square, size: ${side} * ${side} px\n`);
+    }
   }
 
   private sendCommand(command: string) {
     this.duplex._write(`${command}\0`, 'utf-8', (err) => err && console.error(err));
-    process.stdout.write(`${command}${SUCCESS}`);
+    this.printResult(command);
   }
 
   [MOUSE_POSITION] = () => {
@@ -75,6 +99,7 @@ class Handler implements IHandler {
   };
 
   [DRAW_SQUARE] = ([size]: string[]) => {
+    this.shifts = [+size, +size];
     this.getMouseCoordinates();
     this.sendCommand(DRAW_SQUARE);
 
@@ -82,6 +107,7 @@ class Handler implements IHandler {
   };
 
   [DRAW_RECTANGLE] = ([shiftX, shiftY]: string[]) => {
+    this.shifts = [+shiftX, +shiftY];
     this.getMouseCoordinates();
     this.sendCommand(DRAW_RECTANGLE);
 
@@ -89,6 +115,7 @@ class Handler implements IHandler {
   };
 
   [DRAW_CIRCLE] = ([radius]: string[]) => {
+    this.shifts = [+radius];
     this.getMouseCoordinates();
     this.sendCommand(DRAW_CIRCLE);
 

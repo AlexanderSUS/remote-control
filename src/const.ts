@@ -20,4 +20,4 @@ export const INVALID_COMMAND = 'Invalid command\0';
 
 export const FAIL_INVALID_COMMAND = 'Fail. Invalid command: ';
 
-export const SUCCESS = '\nSuccess\n';
+export const SIZE = 200;
